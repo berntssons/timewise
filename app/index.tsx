@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ScrollView } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
+import { colors } from "@/utils/globalStyles";
 import notifications from "@/utils/notifications";
 
 import Button from '@/components/Button';
@@ -19,6 +20,7 @@ export default function Index() {
         alignItems: "center",
         gap: 20,
         padding: 20,
+        backgroundColor: colors.bg,
       }}>
         <CreateNotification onCreated={(id, title) => setCurrentNotifications(prev => ({ ...prev, [id]: title }))} />
         <Button onPress={() => notifications.cancelAll(() => setCurrentNotifications({}))} >Cancel all</Button>
