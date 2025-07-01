@@ -4,8 +4,8 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import notifications from "@/utils/notifications";
 
-import Button from '@/app/components/Button';
-import CreateNotification from "@/app/components/CreateNotification";
+import Button from '@/components/Button';
+import CreateNotification from "@/components/CreateNotification";
 
 notifications.init();
 

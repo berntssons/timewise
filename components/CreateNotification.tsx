@@ -2,11 +2,11 @@ import { useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import { Switch } from "react-native-gesture-handler";
 
-import globalStyles from '@/app/globalStyles';
+import globalStyles from '@/utils/globalStyles';
 import notifications from '@/utils/notifications';
 
-import Button from '@/app/components/Button';
-import InputWrapper from "@/app/components/InputWrapper";
+import Button from '@/components/Button';
+import InputWrapper from "@/components/InputWrapper";
 
 interface Props {
     onCreated: (id: string, title: string) => void;

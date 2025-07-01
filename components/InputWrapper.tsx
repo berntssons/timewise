@@ -1,7 +1,7 @@
 import { PropsWithChildren } from "react";
 import { Text, View } from "react-native";
 
-import globalStyles from '@/app/globalStyles';
+import globalStyles from '@/utils/globalStyles';
 
 interface Props {
     label: string,
