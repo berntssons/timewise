@@ -1,25 +1,33 @@
 import { StyleSheet } from 'react-native';
 
+const lightest = '#fff';
+const dark = '#2A272C';
+const darkest = '#1A171C';
+const orange = '#FFB855';
+
+export const colors = {
+    text: lightest,
+    bg: dark,
+    bgSecondary: darkest,
+    accent: orange,
+}
+
 const styles = StyleSheet.create({
     h1: {
-        fontSize: 40,
-        fontWeight: 'bold',
+        fontSize: 32,
+        fontFamily: 'monospace',
     },
     h2: {
-        fontSize: 32,
-        fontWeight: 'bold',
+        fontSize: 24,
+        fontFamily: 'monospace',
     },
     h3: {
-        fontSize: 24,
-        fontWeight: 'bold',
-    },
-    h4: {
         fontSize: 20,
-        fontWeight: 'bold',
+        fontFamily: 'monospace',
     },
-    h5: {
+    p: {
         fontSize: 16,
-        fontWeight: 'bold',
+        fontFamily: 'monospace',
     },
     label: {
         fontSize: 12,
@@ -28,7 +36,6 @@ const styles = StyleSheet.create({
     button: {
         fontSize: 12,
         fontFamily: 'monospace',
-        fontWeight: 'bold',
     }
 });
 
