@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
-import { Switch } from "react-native-gesture-handler";
 
-import globalStyles from '@/utils/globalStyles';
+import useSelect from "@/hooks/useSelect";
+import globalStyles, { colors } from '@/utils/globalStyles';
 import notifications from '@/utils/notifications';
 
+import AlarmType, { IAlarmType } from "@/components/AlarmType";
 import Button from '@/components/Button';
 import InputWrapper from "@/components/InputWrapper";
 
@@ -14,45 +15,50 @@ interface Props {
 
 export default function CreateNotification ({ onCreated }: Props) {
     const [title, setTitle] = useState<string>();
-    const [body, setBody] = useState<string>();
     const [duration, setDuration] = useState('0');
     const [interval, setInterval] = useState<string>('10');
-    const [repeats, setRepeats] = useState<boolean>(false);
+
+    const alarmTypes: IAlarmType[] = ['Alarm', 'Timer', 'Stopwatch' ];
+    const [SelectType, selectedTypes] = useSelect({
+        options: alarmTypes.map(value => ({
+            value,
+            component: (props) => <AlarmType {...props} type={value} />
+        })),
+        multiselect: false,
+    })
 
     return (
         <View style={styles.wrapper}>
             <Text style={globalStyles.h3}>Create timer</Text>
+
             <InputWrapper label="Title">
                 <TextInput value={title} onChangeText={setTitle} style={styles.textInput} />
             </InputWrapper>
-            <InputWrapper label="Text">
-                <TextInput value={body} onChangeText={setBody} editable multiline numberOfLines={4} style={styles.textInput} />
+
+            <InputWrapper label="Type">
+                <SelectType style={styles.selectType} />
             </InputWrapper>
+
              <InputWrapper label="Duration (in seconds)">
                 <TextInput value={duration} onChangeText={setDuration} style={styles.textInput} keyboardType="numeric" />
             </InputWrapper>
-            <InputWrapper label="Interval" layout="row">
-                <Switch onValueChange={() => setRepeats(prev => !prev)} value={repeats} />
+            
+            <InputWrapper label={"Remind me every _ seconds"}>
+                <TextInput value={interval} onChangeText={setInterval} style={styles.textInput} keyboardType="numeric" />
             </InputWrapper>
-            {repeats && 
-                <InputWrapper label={"Remind me every _ seconds"}>
-                    <TextInput value={interval} onChangeText={setInterval} style={styles.textInput} keyboardType="numeric" />
-                </InputWrapper>
-            }
             
             <Button 
                 onPress={() => {
                     notifications.create({
                         content: {
                             title, 
-                            body,
                             data: {
                                 birth: Date.now(),
                                 death: Date.now() + parseInt(duration) * 1000,
                             },
                         },
-                        seconds: parseInt(interval),
-                        repeats,
+                        seconds: parseInt(interval ?? duration),
+                        repeats: !!interval,
                         onCreated: (id, title) => {
                             // TODO: Reset states
                             onCreated(id, title);
@@ -72,8 +78,13 @@ const styles = StyleSheet.create({
         gap: 20,
     },
     textInput: {
-        borderWidth: 1,
-        borderRadius: 3,
         minWidth: '100%',
+        borderWidth: 1,
+        borderColor: colors.text,
+        color: colors.text,
     },
+    selectType: {
+        flexDirection: 'row',
+        gap: 12,
+    }
 })
