@@ -14,7 +14,7 @@ export default function InputWrapper ({label, layout = 'column', children}: Prop
             flexDirection: layout,
             alignItems: layout === 'row' ? 'center' : 'flex-start',
         }}>
-            <Text style={globalStyles.label}>{label}</Text>
+            <Text style={{ ...globalStyles.p, marginBottom: 12 }}>{label}</Text>
             {children}
         </View>
     )
