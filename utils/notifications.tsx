@@ -1,19 +1,27 @@
+import { IAlarmType } from '@/components/AlarmType';
 import * as Notifications from 'expo-notifications';
+import { formatActiveReminder, ScheduledNotification } from './helpers';
 
 export interface NotificationData {
-  birth?: number;
+  type: IAlarmType;
+  birth: number;
   death?: number;
 }
 
-// First, set the handler that will cause the notification
-// to show the alert
+export interface NotificationRequest extends Notifications.NotificationRequest {
+  content: Notifications.NotificationContent & {
+    title: string;
+    data: NotificationData;
+  };
+}
+
 const init = () =>
   Notifications.setNotificationHandler({
     handleNotification: async (notification) => {
       const { content, identifier: id, trigger } = notification.request;
-      const data: NotificationData = content?.data;
+      const death = content?.data?.death;
 
-      if (data.death && data.death < Date.now()) {
+      if (typeof death === 'number' && death < Date.now()) {
         cancel(id);
       }
 
@@ -27,27 +35,41 @@ const init = () =>
   });
 
 interface CreateOptions {
-  content: Notifications.NotificationContentInput;
-  seconds?: number;
-  repeats?: boolean;
-  onCreated?: (id: string, title: string) => void;
+  title: string;
+  type: IAlarmType;
+  interval: number;
+  duration?: number;
+  onCreated?: (id: string, data: NotificationData) => void;
 }
 
 const create = async ({
-  content,
-  seconds = 0,
-  repeats = false,
+  title,
+  type,
+  interval,
+  duration,
   onCreated,
 }: CreateOptions) => {
+  const data = {
+    type,
+    birth: Date.now(),
+    ...(duration && {
+      death: Date.now() + duration * 1000,
+    }),
+  };
+
   const id = await Notifications.scheduleNotificationAsync({
-    content,
+    content: {
+      title,
+      data,
+    },
     trigger: {
       type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-      seconds,
-      repeats,
+      seconds: interval ?? duration,
+      repeats: !!interval,
     },
   });
-  onCreated?.(id, content.title ?? id);
+  onCreated?.(id, data);
+
   return id;
 };
 
@@ -62,14 +84,16 @@ const cancelAll = async (onCancelled?: () => void) => {
 
 const getActive = async () => {
   const active = await Notifications.getAllScheduledNotificationsAsync();
-  const activeIds = active.map((notification) => notification.identifier);
-  return activeIds;
+  return active.map((notification) =>
+    formatActiveReminder(notification as ScheduledNotification)
+  );
 };
 
-const isActive = async (id: string) => {
+const isActive = async (id: string, isSavedId: boolean) => {
   const active = await getActive();
-  const isActive = active.includes(id);
-  return isActive;
+  return active.some((reminder) =>
+    isSavedId ? reminder.savedId === id : reminder.id === id
+  );
 };
 
 export default {

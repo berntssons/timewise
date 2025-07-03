@@ -1,18 +1,16 @@
 import { useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
-import { useDispatch } from 'react-redux';
 
-import { saveReminder } from '@/features/reminders/remindersSlice';
+import useNotifications from '@/hooks/useNotifications';
 import useSelect from '@/hooks/useSelect';
 import globalStyles, { colors } from '@/utils/globalStyles';
-import notifications from '@/utils/notifications';
 
 import AlarmType, { IAlarmType } from '@/components/AlarmType';
 import Button from '@/components/Button';
 import InputWrapper from '@/components/InputWrapper';
 
 export default function CreateNotification() {
-  const dispatch = useDispatch();
+  const { start, save, saveAndStart } = useNotifications();
 
   const [title, setTitle] = useState<string>('');
   const [duration, setDuration] = useState('0');
@@ -26,6 +24,7 @@ export default function CreateNotification() {
     })),
     multiselect: false,
   });
+  const selectedType = (selectedTypes as IAlarmType[])[0];
 
   return (
     <View style={styles.wrapper}>
@@ -67,29 +66,28 @@ export default function CreateNotification() {
       </InputWrapper>
 
       <Button
-        onPress={async () => {
-          if (!title) return;
-          const id = await notifications.create({
-            content: {
-              title,
-              data: {
-                birth: Date.now(),
-                death: Date.now() + parseInt(duration) * 1000,
-              },
-            },
-            seconds: parseInt(interval ?? duration),
-            repeats: !!interval,
-          });
-          dispatch(
-            saveReminder({
-              id,
-              title,
-              type: selectedTypes[0] as IAlarmType,
-            })
-          );
-        }}
+        onPress={() =>
+          save({
+            title,
+            type: selectedType,
+            interval: parseInt(interval),
+            ...(duration && { duration: parseInt(duration) }),
+          })
+        }
       >
         Save reminder
+      </Button>
+      <Button
+        onPress={() =>
+          saveAndStart({
+            title,
+            type: selectedType,
+            interval: parseInt(interval),
+            ...(duration && { duration: parseInt(duration) }),
+          })
+        }
+      >
+        Save and start
       </Button>
     </View>
   );

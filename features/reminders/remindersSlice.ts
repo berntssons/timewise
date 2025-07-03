@@ -2,18 +2,34 @@ import { IAlarmType } from '@/components/AlarmType'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
 
-interface IReminder {
-  id: string
+export interface IReminder {
   title: string
   type: IAlarmType,
+  interval: number,
+  duration?: number,
+  savedId?: string,
+};
+
+export interface ISavedReminder extends IReminder {
+  savedId: string,
+};
+
+export interface IActiveReminder {
+  id: string,
+  title: string,
+  interval: number,
+  type: IAlarmType,
+  birth: number,
+  death?: number,
+  savedId?: string,
 }
 
 interface ReminderState {
   saved: {
-    [id: string]: IReminder
+    [savedId: string]: ISavedReminder
   },
   active: {  
-    [id: string]: IReminder
+    [id: string]: IActiveReminder
   },
 }
 
@@ -23,21 +39,30 @@ export const remindersSlice = createSlice({
   name: 'reminders',
   initialState,
   reducers: {
-    saveReminder: (state, action: PayloadAction<IReminder>) => {
-      state.saved[action.payload.id] = action.payload;
+    saveReminder: (state, action: PayloadAction<ISavedReminder>) => {
+      state.saved[action.payload.savedId] = action.payload;
     },
-    deleteReminder: (state, action: PayloadAction<{ id: string }>) => {
-      delete state.saved[action.payload.id];
+    deleteReminder: (state, action: PayloadAction<{ savedId: string }>) => {
+      delete state.saved[action.payload.savedId];
     },
-    addActiveReminder: (state, action: PayloadAction<IReminder>) => {
+    deleteAllReminders: (state) => {
+      state.saved = {};
+    },
+    activateReminder: (state, action: PayloadAction<IActiveReminder>) => {
       state.active[action.payload.id] = action.payload;
     },
-    removeActiveReminder: (state, action: PayloadAction<{ id: string }>) => {
+    cancelReminder: (state, action: PayloadAction<{ id: string }>) => {
       delete state.active[action.payload.id];
+    },
+    updateActiveReminders: (state, action: PayloadAction<IActiveReminder[]>) => {
+      state.active = {};
+      for (const reminder of action.payload) {
+        state.active[reminder.id] = reminder;
+      }
     }
   },
 });
 
-export const { saveReminder, deleteReminder } = remindersSlice.actions;
+export const { saveReminder, deleteReminder, deleteAllReminders, activateReminder, cancelReminder, updateActiveReminders } = remindersSlice.actions;
 
 export default remindersSlice.reducer;
