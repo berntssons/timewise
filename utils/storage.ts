@@ -1,19 +1,18 @@
-import { MMKV } from 'react-native-mmkv';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Storage } from 'redux-persist';
 
-const storage = new MMKV()
-
 const reduxStorage: Storage = {
-  setItem: (key, value) => {
-    storage.set(key, value)
-    return Promise.resolve(true)
+  setItem: async (key, value) => {
+    await AsyncStorage.setItem(key, JSON.stringify(value));
+    return Promise.resolve(true);
   },
-  getItem: (key) => {
-    const value = storage.getString(key)
+  getItem: async (key) => {
+    const jsonValue = await AsyncStorage.getItem(key);
+    const value = jsonValue ? JSON.parse(jsonValue) : null;
     return Promise.resolve(value)
   },
-  removeItem: (key) => {
-    storage.delete(key)
+  removeItem: async (key) => {
+    await AsyncStorage.removeItem(key)
     return Promise.resolve()
   },
 }
