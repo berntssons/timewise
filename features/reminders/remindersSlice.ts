@@ -9,20 +9,33 @@ interface IReminder {
 }
 
 interface ReminderState {
-  saved: IReminder[]
+  saved: {
+    [id: string]: IReminder
+  },
+  active: [id: string][] 
 }
 
-const initialState = { saved: [] } satisfies ReminderState as ReminderState;
+const initialState = { saved: {}, active: [] } satisfies ReminderState as ReminderState;
 
 export const remindersSlice = createSlice({
   name: 'reminders',
   initialState,
   reducers: {
     saveReminder: (state, action: PayloadAction<IReminder>) => {
-      state.saved.push(action.payload);
+      state.saved[action.payload.id] = action.payload;
     },
     deleteReminder: (state, action: PayloadAction<{ id: string }>) => {
-      state.saved = state.saved.filter(reminder => reminder.id !== action.payload.id);
+      delete state.saved[action.payload.id];
+    },
+    addActiveReminder: (state, action: PayloadAction<{id: string}>) => {
+      const reminderId = action.payload.id;
+      if (!state.active.some(([id]) => id === reminderId)) {
+        state.active.push([reminderId]);
+      }
+    },
+    removeActiveReminder: (state, action: PayloadAction<{id: string}>) => {
+      const reminderId = action.payload.id;
+      state.active = state.active.filter(([id]) => id !== reminderId);
     }
   },
 });
