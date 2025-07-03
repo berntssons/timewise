@@ -4,12 +4,14 @@ const lightest = '#fff';
 const dark = '#2A272C';
 const darkest = '#1A171C';
 const orange = '#FFB855';
+const red = '#FF3859';
 
 export const colors = {
     text: lightest,
     bg: dark,
     bgSecondary: darkest,
     accent: orange,
+    critical: red,
 }
 
 const styles = StyleSheet.create({
