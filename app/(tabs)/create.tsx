@@ -3,7 +3,6 @@ import { ScrollView } from 'react-native';
 import { colors } from '@/utils/globalStyles';
 import notifications from '@/utils/notifications';
 
-import Button from '@/components/Button';
 import CreateNotification from '@/components/CreateNotification';
 
 notifications.init();
@@ -20,7 +19,6 @@ export default function Create() {
       }}
     >
       <CreateNotification />
-      <Button onPress={() => notifications.cancelAll()}>Cancel all</Button>
     </ScrollView>
   );
 }

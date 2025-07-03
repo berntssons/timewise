@@ -43,6 +43,15 @@ export default function TabLayout() {
           //   ),
         }}
       />
+      <Tabs.Screen
+        name="active"
+        options={{
+          title: 'Active',
+          //   tabBarIcon: ({ color }) => (
+          //     <IconSymbol size={28} name="house.fill" color={color} />
+          //   ),
+        }}
+      />
     </Tabs>
   );
 }

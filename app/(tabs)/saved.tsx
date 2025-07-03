@@ -1,18 +1,21 @@
 import { ScrollView, Text, View } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { RootState } from '@/app/store';
-import { deleteReminder } from '@/features/reminders/remindersSlice';
+import useNotifications from '@/hooks/useNotifications';
 import globalStyles, { colors } from '@/utils/globalStyles';
-import notifications from '@/utils/notifications';
 
 import Button from '@/components/Button';
 
 export default function Saved() {
+  const { unsave, unsaveAll, cancel, start } = useNotifications();
+
   const savedReminders = useSelector(
     (state: RootState) => state.reminders.saved
   );
-  const dispatch = useDispatch();
+  const activeReminders = useSelector(
+    (state: RootState) => state.reminders.active
+  );
 
   return (
     <ScrollView
@@ -26,30 +29,41 @@ export default function Saved() {
       <Text style={{ ...globalStyles.h3, color: colors.accent, width: '100%' }}>
         Saved reminders
       </Text>
-      {Object.entries(savedReminders).map(([id, reminder]) => (
-        <View
-          key={id}
-          style={{
-            width: '100%',
-            gap: 12,
-            borderWidth: 1,
-            borderColor: colors.text,
-            padding: 12,
-          }}
-        >
-          <Text style={globalStyles.h3}>{reminder.title}</Text>
-          <Text style={globalStyles.p}>{reminder.type}</Text>
-          <Button onPress={() => notifications.cancel(id)}>Cancel</Button>
-          <Button
-            onPress={() => {
-              dispatch(deleteReminder({ id }));
-              notifications.cancel(id);
+      {Object.entries(savedReminders).map(([savedId, reminder]) => {
+        const activeId = Object.keys(activeReminders).find(
+          (id) => activeReminders[id].savedId === savedId
+        );
+        return (
+          <View
+            key={savedId}
+            style={{
+              width: '100%',
+              gap: 12,
+              borderWidth: 1,
+              borderColor: colors.text,
+              padding: 12,
             }}
           >
-            Delete
-          </Button>
-        </View>
-      ))}
+            <Text style={globalStyles.h3}>{reminder.title}</Text>
+            <Text style={globalStyles.p}>
+              {reminder.type}
+              {reminder.duration && ` - ${reminder.duration} seconds`}
+            </Text>
+            {reminder.interval && (
+              <Text style={globalStyles.p}>
+                {`Reminder every ${reminder.interval} seconds`}
+              </Text>
+            )}
+            {activeId ? (
+              <Button onPress={() => cancel(activeId)}>Cancel</Button>
+            ) : (
+              <Button onPress={() => start(reminder)}>Start</Button>
+            )}
+            <Button onPress={() => unsave(reminder.savedId)}>Delete</Button>
+          </View>
+        );
+      })}
+      {/* <Button onPress={unsaveAll}>Delete all</Button> */}
     </ScrollView>
   );
 }
