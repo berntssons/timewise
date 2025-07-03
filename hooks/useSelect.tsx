@@ -9,16 +9,21 @@ interface Props {
     multiselect: boolean,
 };
 
-type SelectComponent = ComponentType<{style?: StyleProp<ViewStyle>}>;
+interface SelectProps {
+    wrapperStyle?: StyleProp<ViewStyle>;
+    itemStyle?: StyleProp<ViewStyle>;
+}
+
+type SelectComponent = ComponentType<SelectProps>;
 
 const useSelect = ({options = [], multiselect = false}: Props): [component: SelectComponent, selected: string[]] => {
     const [selected, setSelected] = useState<string[]>(multiselect ? [] : [options[0].value]);
 
-    const Select: SelectComponent = ({style}) => (
-        <View style={style}>
+    const Select: SelectComponent = ({wrapperStyle, itemStyle}) => (
+        <View style={wrapperStyle}>
             {options.map(({ value, component: Component }) => {
                 return (
-                    <Pressable style={{ width: '33%', flex: 1 }}
+                    <Pressable style={itemStyle}
                         key={value} 
                         onPress={() => {
                             if (!selected.includes(value)) {
