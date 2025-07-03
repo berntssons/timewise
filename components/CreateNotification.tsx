@@ -1,24 +1,23 @@
 import { useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 
+import { saveReminder } from '@/features/reminders/remindersSlice';
 import useSelect from '@/hooks/useSelect';
 import globalStyles, { colors } from '@/utils/globalStyles';
-import notifications from '@/utils/notifications';
 
 import AlarmType, { IAlarmType } from '@/components/AlarmType';
 import Button from '@/components/Button';
 import InputWrapper from '@/components/InputWrapper';
 
-interface Props {
-  onCreated: (id: string, title: string) => void;
-}
+export default function CreateNotification() {
+  const dispatch = useDispatch();
 
-export default function CreateNotification({ onCreated }: Props) {
-  const [title, setTitle] = useState<string>();
+  const [title, setTitle] = useState<string>('');
   const [duration, setDuration] = useState('0');
   const [interval, setInterval] = useState<string>('10');
 
-  const alarmTypes: IAlarmType[] = ['Alarm', 'Timer', 'Stopwatch'];
+  const alarmTypes: IAlarmType[] = ['Timer', 'Stopwatch'];
   const [SelectType, selectedTypes] = useSelect({
     options: alarmTypes.map((value) => ({
       value,
@@ -29,7 +28,9 @@ export default function CreateNotification({ onCreated }: Props) {
 
   return (
     <View style={styles.wrapper}>
-      <Text style={globalStyles.h3}>Create timer</Text>
+      <Text style={{ ...globalStyles.h3, color: colors.accent }}>
+        Create reminder
+      </Text>
 
       <InputWrapper label="Title">
         <TextInput
@@ -65,25 +66,29 @@ export default function CreateNotification({ onCreated }: Props) {
       </InputWrapper>
 
       <Button
-        onPress={() => {
-          notifications.create({
-            content: {
+        onPress={async () => {
+          if (!title) return;
+          // const id = await notifications.create({
+          //   content: {
+          //     title,
+          //     data: {
+          //       birth: Date.now(),
+          //       death: Date.now() + parseInt(duration) * 1000,
+          //     },
+          //   },
+          //   seconds: parseInt(interval ?? duration),
+          //   repeats: !!interval,
+          // });
+          dispatch(
+            saveReminder({
+              id: 'hej',
               title,
-              data: {
-                birth: Date.now(),
-                death: Date.now() + parseInt(duration) * 1000,
-              },
-            },
-            seconds: parseInt(interval ?? duration),
-            repeats: !!interval,
-            onCreated: (id, title) => {
-              // TODO: Reset states
-              onCreated(id, title);
-            },
-          });
+              type: selectedTypes[0] as IAlarmType,
+            })
+          );
         }}
       >
-        Create notification
+        Save reminder
       </Button>
     </View>
   );
