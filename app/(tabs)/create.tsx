@@ -5,26 +5,26 @@ import { IReminderType, REMINDER_TYPES } from '@/features/reminders';
 import useNotifications from '@/hooks/useNotifications';
 import useSelect from '@/hooks/useSelect';
 import { colors, typography } from '@/utils/globalStyles';
-import notifications from '@/utils/notifications';
+import { durationStringToSeconds } from '@/utils/helpers';
 
 import AlarmType from '@/components/AlarmType';
 import Button from '@/components/Button';
+import DurationPicker from '@/components/DurationPicker';
 import InputWrapper from '@/components/InputWrapper';
 
-notifications.init();
+const alarmTypes: IReminderType[] = [
+  REMINDER_TYPES.TIMER,
+  REMINDER_TYPES.STOPWATCH,
+  /* REMINDER_TYPES.ALARM, */
+];
 
 export default function Create() {
-  const { start, save, saveAndStart } = useNotifications();
+  const { save, saveAndStart } = useNotifications();
 
-  const [title, setTitle] = useState<string>('');
-  const [duration, setDuration] = useState('00');
-  const [interval, setInterval] = useState<string>('10');
+  const [title, setTitle] = useState('');
+  const [duration, setDuration] = useState('00:00:00');
+  const [interval, setInterval] = useState('10');
 
-  const alarmTypes: IReminderType[] = [
-    REMINDER_TYPES.TIMER,
-    REMINDER_TYPES.STOPWATCH,
-    /* REMINDER_TYPES.ALARM, */
-  ];
   const [SelectType, selectedTypes] = useSelect({
     options: alarmTypes.map((value) => ({
       value,
@@ -32,7 +32,21 @@ export default function Create() {
     })),
     multiselect: false,
   });
-  const selectedType = (selectedTypes as IReminderType[])[0];
+
+  const saveReminder = ({ start = false }) => {
+    // Save (and maybe start) reminder
+    const saveFunc = start ? saveAndStart : save;
+    saveFunc({
+      title,
+      type: (selectedTypes as IReminderType[])[0],
+      interval: parseInt(interval),
+      duration: durationStringToSeconds(duration),
+    });
+    // Reset states
+    setTitle('');
+    setDuration('00:00:00');
+    setInterval('10');
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.wrapper}>
@@ -54,14 +68,8 @@ export default function Create() {
           itemStyle={styles.alarmType}
         />
       </InputWrapper>
-
-      <InputWrapper label="Duration (in seconds)">
-        <TextInput
-          value={duration}
-          onChangeText={setDuration}
-          style={styles.textInput}
-          keyboardType="numeric"
-        />
+      <InputWrapper label="Duration">
+        <DurationPicker durationString={duration} onChange={setDuration} />
       </InputWrapper>
 
       <InputWrapper label={'Remind me every _ seconds'}>
@@ -73,28 +81,10 @@ export default function Create() {
         />
       </InputWrapper>
 
-      <Button
-        onPress={() =>
-          save({
-            title,
-            type: selectedType,
-            interval: parseInt(interval),
-            ...(duration && { duration: parseInt(duration) }),
-          })
-        }
-      >
+      <Button onPress={() => saveReminder({ start: false })}>
         Save reminder
       </Button>
-      <Button
-        onPress={() =>
-          saveAndStart({
-            title,
-            type: selectedType,
-            interval: parseInt(interval),
-            ...(duration && { duration: parseInt(duration) }),
-          })
-        }
-      >
+      <Button onPress={() => saveReminder({ start: true })}>
         Save and start
       </Button>
     </ScrollView>
