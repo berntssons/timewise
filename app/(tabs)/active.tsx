@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 
 import { RootState } from '@/app/store';
 import useNotifications from '@/hooks/useNotifications';
-import globalStyles, { colors } from '@/utils/globalStyles';
+import { colors, typography } from '@/utils/globalStyles';
 
 import Button from '@/components/Button';
 import ConfirmButton from '@/components/ConfirmButton';
@@ -29,7 +29,7 @@ export default function Saved() {
         padding: 20,
       }}
     >
-      <Text style={{ ...globalStyles.h3, color: colors.accent, width: '100%' }}>
+      <Text style={{ ...typography.h3, color: colors.accent, width: '100%' }}>
         Active reminders
       </Text>
       {Object.entries(activeReminders)?.map(([id, reminder]) =>
@@ -44,8 +44,8 @@ export default function Saved() {
               padding: 12,
             }}
           >
-            <Text style={globalStyles.h3}>{reminder.title}</Text>
-            <Text style={globalStyles.p}>{reminder.type}</Text>
+            <Text style={typography.h3}>{reminder.title}</Text>
+            <Text style={typography.p}>{reminder.type}</Text>
             <Button onPress={() => cancel(id)}>Cancel</Button>
           </View>
         ) : null

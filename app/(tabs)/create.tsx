@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet, Text, TextInput } from 'react-native';
 
 import useNotifications from '@/hooks/useNotifications';
 import useSelect from '@/hooks/useSelect';
-import globalStyles, { colors } from '@/utils/globalStyles';
+import { colors, typography } from '@/utils/globalStyles';
 import notifications from '@/utils/notifications';
 
 import AlarmType, { IAlarmType } from '@/components/AlarmType';
@@ -31,7 +31,7 @@ export default function Create() {
 
   return (
     <ScrollView contentContainerStyle={styles.wrapper}>
-      <Text style={{ ...globalStyles.h3, color: colors.accent }}>
+      <Text style={{ ...typography.h3, color: colors.accent }}>
         Create reminder
       </Text>
 

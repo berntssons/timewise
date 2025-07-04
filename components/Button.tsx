@@ -1,7 +1,7 @@
 import { PropsWithChildren } from 'react';
 import { Pressable, PressableProps, Text, ViewStyle } from 'react-native';
 
-import globalStyles, { colors } from '@/utils/globalStyles';
+import { colors, typography } from '@/utils/globalStyles';
 
 export default function Button({
   children,
@@ -18,7 +18,7 @@ export default function Button({
       }}
       {...rest}
     >
-      <Text style={globalStyles.button}>{children}</Text>
+      <Text style={typography.button}>{children}</Text>
     </Pressable>
   );
 }

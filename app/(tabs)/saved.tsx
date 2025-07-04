@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 
 import { RootState } from '@/app/store';
 import useNotifications from '@/hooks/useNotifications';
-import globalStyles, { colors } from '@/utils/globalStyles';
+import { colors, typography } from '@/utils/globalStyles';
 
 import Button from '@/components/Button';
 
@@ -26,7 +26,7 @@ export default function Saved() {
         padding: 20,
       }}
     >
-      <Text style={{ ...globalStyles.h3, color: colors.accent, width: '100%' }}>
+      <Text style={{ ...typography.h3, color: colors.accent, width: '100%' }}>
         Saved reminders
       </Text>
       {Object.entries(savedReminders).map(([savedId, reminder]) => {
@@ -44,13 +44,13 @@ export default function Saved() {
               padding: 12,
             }}
           >
-            <Text style={globalStyles.h3}>{reminder.title}</Text>
-            <Text style={globalStyles.p}>
+            <Text style={typography.h3}>{reminder.title}</Text>
+            <Text style={typography.p}>
               {reminder.type}
               {reminder.duration && ` - ${reminder.duration} seconds`}
             </Text>
             {reminder.interval && (
-              <Text style={globalStyles.p}>
+              <Text style={typography.p}>
                 {`Reminder every ${reminder.interval} seconds`}
               </Text>
             )}

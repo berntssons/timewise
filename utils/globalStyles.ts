@@ -1,20 +1,16 @@
 import { StyleSheet } from 'react-native';
 
-const lightest = '#fff';
-const dark = '#2A272C';
-const darkest = '#1A171C';
-const orange = '#FFB855';
-const red = '#FF3859';
+import { DARK_GRAY, DARKER_GRAY, ORANGE, RED, WHITE } from '@/utils/constants';
 
 export const colors = {
-    text: lightest,
-    bg: dark,
-    bgSecondary: darkest,
-    accent: orange,
-    critical: red,
+    text: WHITE,
+    bg: DARK_GRAY,
+    bgSecondary: DARKER_GRAY,
+    accent: ORANGE,
+    critical: RED,
 }
 
-const styles = StyleSheet.create({
+export const typography = StyleSheet.create({
     h1: {
         fontSize: 32,
         fontFamily: 'monospace',
@@ -46,5 +42,3 @@ const styles = StyleSheet.create({
         color: colors.text,
     }
 });
-
-export default styles;
