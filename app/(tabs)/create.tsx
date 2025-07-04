@@ -32,6 +32,7 @@ export default function Create() {
     })),
     multiselect: false,
   });
+  const hasDuration = selectedTypes[0] === REMINDER_TYPES.TIMER;
 
   const saveReminder = ({ start = false }) => {
     // Save (and maybe start) reminder
@@ -40,7 +41,7 @@ export default function Create() {
       title,
       type: (selectedTypes as IReminderType[])[0],
       interval: parseInt(interval),
-      duration: durationStringToSeconds(duration),
+      ...(hasDuration && { duration: durationStringToSeconds(duration) }),
     });
     // Reset states
     setTitle('');
@@ -68,9 +69,11 @@ export default function Create() {
           itemStyle={styles.alarmType}
         />
       </InputWrapper>
-      <InputWrapper label="Duration">
-        <DurationPicker durationString={duration} onChange={setDuration} />
-      </InputWrapper>
+      {hasDuration && (
+        <InputWrapper label="Duration">
+          <DurationPicker durationString={duration} onChange={setDuration} />
+        </InputWrapper>
+      )}
 
       <InputWrapper label={'Remind me every _ seconds'}>
         <TextInput
