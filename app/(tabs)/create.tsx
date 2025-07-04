@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput } from 'react-native';
 
+import { IReminderType, REMINDER_TYPES } from '@/features/reminders';
 import useNotifications from '@/hooks/useNotifications';
 import useSelect from '@/hooks/useSelect';
 import { colors, typography } from '@/utils/globalStyles';
 import notifications from '@/utils/notifications';
 
-import AlarmType, { IAlarmType } from '@/components/AlarmType';
+import AlarmType from '@/components/AlarmType';
 import Button from '@/components/Button';
 import InputWrapper from '@/components/InputWrapper';
 
@@ -16,10 +17,14 @@ export default function Create() {
   const { start, save, saveAndStart } = useNotifications();
 
   const [title, setTitle] = useState<string>('');
-  const [duration, setDuration] = useState('0');
+  const [duration, setDuration] = useState('00');
   const [interval, setInterval] = useState<string>('10');
 
-  const alarmTypes: IAlarmType[] = ['Timer', 'Stopwatch'];
+  const alarmTypes: IReminderType[] = [
+    REMINDER_TYPES.TIMER,
+    REMINDER_TYPES.STOPWATCH,
+    /* REMINDER_TYPES.ALARM, */
+  ];
   const [SelectType, selectedTypes] = useSelect({
     options: alarmTypes.map((value) => ({
       value,
@@ -27,7 +32,7 @@ export default function Create() {
     })),
     multiselect: false,
   });
-  const selectedType = (selectedTypes as IAlarmType[])[0];
+  const selectedType = (selectedTypes as IReminderType[])[0];
 
   return (
     <ScrollView contentContainerStyle={styles.wrapper}>

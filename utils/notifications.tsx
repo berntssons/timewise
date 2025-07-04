@@ -1,9 +1,10 @@
-import { IAlarmType } from '@/components/AlarmType';
 import * as Notifications from 'expo-notifications';
-import { formatActiveReminder, ScheduledNotification } from './helpers';
+
+import { IReminderType } from '@/features/reminders';
+import { formatActiveReminder, ScheduledNotification } from '@/utils/helpers';
 
 export interface NotificationData {
-  type: IAlarmType;
+  type: IReminderType;
   birth: number;
   death?: number;
 }
@@ -36,7 +37,7 @@ const init = () =>
 
 interface CreateOptions {
   title: string;
-  type: IAlarmType;
+  type: IReminderType;
   interval: number;
   duration?: number;
   onCreated?: (id: string, data: NotificationData) => void;

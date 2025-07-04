@@ -1,37 +1,7 @@
-import { IAlarmType } from '@/components/AlarmType'
-import type { PayloadAction } from '@reduxjs/toolkit'
-import { createSlice } from '@reduxjs/toolkit'
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
-export interface IReminder {
-  title: string
-  type: IAlarmType,
-  interval: number,
-  duration?: number,
-  savedId?: string,
-};
-
-export interface ISavedReminder extends IReminder {
-  savedId: string,
-};
-
-export interface IActiveReminder {
-  id: string,
-  title: string,
-  interval: number,
-  type: IAlarmType,
-  birth: number,
-  death?: number,
-  savedId?: string,
-}
-
-interface ReminderState {
-  saved: {
-    [savedId: string]: ISavedReminder
-  },
-  active: {  
-    [id: string]: IActiveReminder
-  },
-}
+import { IActiveReminder, ISavedReminder, ReminderState } from '@/features/reminders';
 
 const initialState = { saved: {}, active: {} } satisfies ReminderState as ReminderState;
 
@@ -63,6 +33,13 @@ export const remindersSlice = createSlice({
   },
 });
 
-export const { saveReminder, deleteReminder, deleteAllReminders, activateReminder, cancelReminder, updateActiveReminders } = remindersSlice.actions;
+export const { 
+  saveReminder, 
+  deleteReminder, 
+  deleteAllReminders, 
+  activateReminder, 
+  cancelReminder, 
+  updateActiveReminders,
+} = remindersSlice.actions;
 
 export default remindersSlice.reducer;

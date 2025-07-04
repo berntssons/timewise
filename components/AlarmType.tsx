@@ -1,23 +1,22 @@
 import { ComponentType } from 'react';
 import { Image, Text, View } from 'react-native';
 
+import { IReminderType, REMINDER_TYPES } from '@/features/reminders';
+import { colors, typography } from '@/utils/globalStyles';
+
 import alarm from '@/assets/icons/alarm.png';
 import timer from '@/assets/icons/hourglass.png';
 import stopwatch from '@/assets/icons/timer.png';
 
-import { colors, typography } from '@/utils/globalStyles';
-
-export type IAlarmType = 'Alarm' | 'Timer' | 'Stopwatch';
-
 const icons = {
-  Alarm: alarm,
-  Timer: timer,
-  Stopwatch: stopwatch,
+  [REMINDER_TYPES.ALARM]: alarm,
+  [REMINDER_TYPES.TIMER]: timer,
+  [REMINDER_TYPES.STOPWATCH]: stopwatch,
 };
 
-const AlarmType: ComponentType<{ selected?: boolean; type: IAlarmType }> = ({
+const AlarmType: ComponentType<{ selected?: boolean; type: IReminderType }> = ({
   selected,
-  type = 'Alarm',
+  type = REMINDER_TYPES.TIMER,
 }) => {
   return (
     <View

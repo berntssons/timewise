@@ -1,11 +1,10 @@
 import { useDispatch } from 'react-redux';
 
+import { IReminder, ISavedReminder } from '@/features/reminders';
 import {
   activateReminder,
   deleteAllReminders,
   deleteReminder,
-  IReminder,
-  ISavedReminder,
   saveReminder,
   updateActiveReminders,
 } from '@/features/reminders/remindersSlice';
