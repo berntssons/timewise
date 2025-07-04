@@ -18,6 +18,8 @@ export default function InputWrapper({
       style={{
         flexDirection: layout,
         alignItems: layout === 'row' ? 'center' : 'flex-start',
+        width: '100%',
+        flexShrink: 1,
       }}
     >
       <Text style={{ ...typography.p, marginBottom: 12 }}>{label}</Text>
