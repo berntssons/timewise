@@ -2,12 +2,13 @@ import * as Notifications from 'expo-notifications';
 
 import { IReminderType } from '@/features/reminders';
 import { NOTIFICATION_CHANNEL } from '@/utils/constants';
+import { getAccumulatedTimeText } from '../helpers';
 
 export interface NotificationData {
   type: IReminderType;
-  birth: number;
-  death?: number;
+  createdAt: number;
   interval?: number;
+  duration?: number;
   savedId?: string;
 }
 
@@ -34,17 +35,14 @@ export const create = async ({
   type,
   interval,
   duration,
-  body,
   presetId,
   savedId,
   onCreated,
 }: CreateOptions) => {
   const data = {
     type,
-    birth: Date.now(),
-    ...(duration && {
-      death: Date.now() + duration * 1000,
-    }),
+    createdAt: Date.now(),
+    duration,
     savedId,
   };
 
@@ -52,7 +50,7 @@ export const create = async ({
     ...(presetId && { identifier: presetId }),
     content: {
       title,
-      body,
+      body: getAccumulatedTimeText(interval, 'second', duration),
       data,
       priority: Notifications.AndroidNotificationPriority.HIGH, // Android without channels
       interruptionLevel: 'timeSensitive', // iOS
@@ -66,5 +64,16 @@ export const create = async ({
   });
   onCreated?.(id, data);
 
+  return id;
+};
+
+export const replace = async (
+  request: Notifications.NotificationRequest,
+  onReplaced?: (id: string) => void
+) => {
+  const id = await Notifications.scheduleNotificationAsync(
+    request as Notifications.NotificationRequestInput
+  );
+  onReplaced?.(id);
   return id;
 };

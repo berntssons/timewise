@@ -14,8 +14,8 @@ const formatActiveReminder = ({
     title: title,
     interval: (trigger as Notifications.TimeIntervalNotificationTrigger)
       .seconds,
-    birth: data.birth,
-    death: data.death,
+    createdAt: data.createdAt,
+    duration: data.duration,
     savedId: data.savedId,
   };
 };
