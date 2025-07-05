@@ -1,6 +1,7 @@
 import * as Notifications from 'expo-notifications';
 
 import { IReminderType } from '@/features/reminders';
+import { NOTIFICATION_CHANNEL } from '@/utils/constants';
 import { formatActiveReminder, ScheduledNotification } from '@/utils/helpers';
 
 export interface NotificationData {
@@ -16,7 +17,7 @@ export interface NotificationRequest extends Notifications.NotificationRequest {
   };
 }
 
-const init = () =>
+const init = () => {
   Notifications.setNotificationHandler({
     handleNotification: async (notification) => {
       const { content, identifier: id, trigger } = notification.request;
@@ -34,6 +35,23 @@ const init = () =>
       };
     },
   });
+
+  const deleteDefaultChannels = async () => {
+    const channels = await Notifications.getNotificationChannelsAsync();
+    channels.forEach(async ({ id, name }) => {
+      if (id !== NOTIFICATION_CHANNEL.ID) {
+        await Notifications.deleteNotificationChannelAsync(id);
+      }
+    });
+  };
+  deleteDefaultChannels();
+
+  // Create Android channel
+  Notifications.setNotificationChannelAsync(NOTIFICATION_CHANNEL.ID, {
+    name: NOTIFICATION_CHANNEL.NAME,
+    importance: Notifications.AndroidImportance.HIGH,
+  });
+};
 
 interface CreateOptions {
   title: string;
@@ -62,9 +80,12 @@ const create = async ({
     content: {
       title,
       data,
+      priority: Notifications.AndroidNotificationPriority.HIGH, // Android without channels
+      interruptionLevel: 'timeSensitive', // iOS
     },
     trigger: {
       type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+      channelId: NOTIFICATION_CHANNEL.ID,
       seconds: interval ?? duration,
       repeats: !!interval,
     },
