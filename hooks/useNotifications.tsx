@@ -35,7 +35,8 @@ const useNotifications = () => {
     savedId,
   }: IReminder) => {
     if (savedId && (await notifications.isActive(savedId, true))) {
-      return;
+      console.warn('This reminder is already active');
+      return Promise.reject('This reminder is already active');
     }
 
     notifications.create({
@@ -43,6 +44,7 @@ const useNotifications = () => {
       title,
       interval,
       duration,
+      savedId,
       onCreated: (id, data) => {
         dispatch(
           activateReminder({
